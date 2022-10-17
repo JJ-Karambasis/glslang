@@ -30,11 +30,11 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-#include "glslang/Include/glslang_c_interface.h"
+#include "../../glslang/Include/glslang_c_interface.h"
 
-#include "SPIRV/GlslangToSpv.h"
-#include "SPIRV/Logger.h"
-#include "SPIRV/SpvTools.h"
+#include "../GlslangToSpv.h"
+#include "../Logger.h"
+#include "../SpvTools.h"
 
 static_assert(sizeof(glslang_spv_options_t) == sizeof(glslang::SpvOptions), "");
 
@@ -47,35 +47,35 @@ typedef struct glslang_program_s {
 static EShLanguage c_shader_stage(glslang_stage_t stage)
 {
     switch (stage) {
-    case GLSLANG_STAGE_VERTEX:
+        case GLSLANG_STAGE_VERTEX:
         return EShLangVertex;
-    case GLSLANG_STAGE_TESSCONTROL:
+        case GLSLANG_STAGE_TESSCONTROL:
         return EShLangTessControl;
-    case GLSLANG_STAGE_TESSEVALUATION:
+        case GLSLANG_STAGE_TESSEVALUATION:
         return EShLangTessEvaluation;
-    case GLSLANG_STAGE_GEOMETRY:
+        case GLSLANG_STAGE_GEOMETRY:
         return EShLangGeometry;
-    case GLSLANG_STAGE_FRAGMENT:
+        case GLSLANG_STAGE_FRAGMENT:
         return EShLangFragment;
-    case GLSLANG_STAGE_COMPUTE:
+        case GLSLANG_STAGE_COMPUTE:
         return EShLangCompute;
-    case GLSLANG_STAGE_RAYGEN:
+        case GLSLANG_STAGE_RAYGEN:
         return EShLangRayGen;
-    case GLSLANG_STAGE_INTERSECT:
+        case GLSLANG_STAGE_INTERSECT:
         return EShLangIntersect;
-    case GLSLANG_STAGE_ANYHIT:
+        case GLSLANG_STAGE_ANYHIT:
         return EShLangAnyHit;
-    case GLSLANG_STAGE_CLOSESTHIT:
+        case GLSLANG_STAGE_CLOSESTHIT:
         return EShLangClosestHit;
-    case GLSLANG_STAGE_MISS:
+        case GLSLANG_STAGE_MISS:
         return EShLangMiss;
-    case GLSLANG_STAGE_CALLABLE:
+        case GLSLANG_STAGE_CALLABLE:
         return EShLangCallable;
-    case GLSLANG_STAGE_TASK:
+        case GLSLANG_STAGE_TASK:
         return EShLangTask;
-    case GLSLANG_STAGE_MESH:
+        case GLSLANG_STAGE_MESH:
         return EShLangMesh;
-    default:
+        default:
         break;
     }
     return EShLangCount;
@@ -92,17 +92,17 @@ GLSLANG_EXPORT void glslang_program_SPIRV_generate(glslang_program_t* program, g
     spv_options.optimize_size = false;
     spv_options.disassemble = false;
     spv_options.validate = true;
-
+    
     glslang_program_SPIRV_generate_with_options(program, stage, &spv_options);
 }
 
 GLSLANG_EXPORT void glslang_program_SPIRV_generate_with_options(glslang_program_t* program, glslang_stage_t stage, glslang_spv_options_t* spv_options) {
     spv::SpvBuildLogger logger;
-
+    
     const glslang::TIntermediate* intermediate = program->program->getIntermediate(c_shader_stage(stage));
-
+    
     glslang::GlslangToSpv(*intermediate, program->spirv, &logger, reinterpret_cast<glslang::SpvOptions*>(spv_options));
-
+    
     program->loggerMessages = logger.getAllMessages();
 }
 
